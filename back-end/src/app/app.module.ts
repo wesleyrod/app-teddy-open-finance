@@ -8,6 +8,7 @@ import { UserModule } from '../user/user.module';
 import { AuthModule } from '../auth/auth.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { AuditInterceptor } from '../common/interceptors/auth.interceptors';
+import { HealthModule } from '../health/health.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { AuditInterceptor } from '../common/interceptors/auth.interceptors';
     ClientModule,
     UserModule,
     AuthModule,
+    HealthModule,
   ],
   controllers: [AppController],
   providers: [
