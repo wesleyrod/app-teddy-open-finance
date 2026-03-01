@@ -23,11 +23,11 @@ jobs:
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
 
+      - name: Typecheck
+        run: NODE_OPTIONS="--max-old-space-size=4096" npx nx run-many -t typecheck
+        
       - name: Lint
         run: npx nx run-many -t lint
-
-      - name: Typecheck
-        run: npx nx run-many -t typecheck
 
       - name: Test
         run: npx nx run-many -t test --parallel=3
