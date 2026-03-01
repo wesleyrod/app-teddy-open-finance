@@ -8,12 +8,16 @@ import {
   Delete, 
   ParseUUIDPipe,
   UseGuards,
+  Query,
+  DefaultValuePipe,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { ClientService } from './client.service';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard'; 
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { PaginationDto } from './dto/pagination-client.dto';
 
 
 @ApiTags('clients')
@@ -29,8 +33,9 @@ export class ClientController {
   }
 
   @Get()
-  findAll() {
-    return this.clientService.findAll(); 
+  @ApiOperation({ summary: 'Lista clientes com paginação (Máx 16 por página)' })
+  findAll(@Query() paginationDto: PaginationDto) {
+    return this.clientService.findAll(paginationDto.page, paginationDto.limit);
   }
 
   @Get(':id')

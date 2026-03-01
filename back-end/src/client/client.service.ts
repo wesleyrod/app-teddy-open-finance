@@ -17,9 +17,22 @@ export class ClientService {
     return await this.repository.save(client);
   }
 
-  async findAll() {
-    return await this.repository.find();
-  }
+
+async findAll(page = 1, limit = 8) {
+  const [data, total] = await this.repository.findAndCount({
+    take: limit,
+    skip: (page - 1) * limit,
+    order: { createdAt: 'DESC' }, 
+  });
+
+  return {
+    clients: data,
+    total,
+    page,
+    limit,
+    totalPages: Math.ceil(total / limit),
+  };
+}
 
   async findOne(id: string) {
     const client = await this.repository.findOneBy({ id });
