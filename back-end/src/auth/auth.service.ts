@@ -11,27 +11,17 @@ export class AuthService {
   ) {}
 
   async signIn(email: string, pass: string) {
-    // Busca o usuário incluindo a senha (que está oculta por padrão)
-    const user = await this.userService.findOneByEmail(email);
+    const user = await this.userService.findByEmail(email);
 
-    // Compara a senha enviada com o hash do banco
     if (!user || !(await bcrypt.compare(pass, user.password))) {
       throw new UnauthorizedException('Credenciais inválidas');
     }
 
-    const payload = { 
-      sub: user.id, 
-      email: user.email, 
-      role: user.role // Requisito: payload com informações de permissão
-    };
+    const payload = { sub: user.id, email: user.email, role: user.role };
 
     return {
       access_token: await this.jwtService.signAsync(payload),
-      user: {
-        name: user.name,
-        email: user.email,
-        role: user.role
-      }
+      user: { name: user.name, email: user.email, role: user.role }
     };
   }
 }
