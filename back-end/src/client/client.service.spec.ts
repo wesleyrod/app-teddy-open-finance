@@ -8,9 +8,8 @@ describe('ClientService', () => {
   let service: ClientService;
 
   const mockClientRepository = {
-    findOneBy: jest.fn(), // Required for findOne()
-    save: jest.fn(),
-    softRemove: jest.fn(), // Required for remove()
+    findOneBy: jest.fn(), 
+    softRemove: jest.fn(), 
     find: jest.fn(),
     create: jest.fn().mockImplementation(dto => ({ id: 'uuid', ...dto })),
   };

@@ -11,7 +11,6 @@ describe('ClientController', () => {
       providers: [
         {
           provide: ClientService,
-          // Mockamos o serviço diretamente para isolar o controlador
           useValue: {
             findAll: jest.fn().mockResolvedValue([]),
             findOne: jest.fn(),

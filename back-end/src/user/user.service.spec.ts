@@ -7,7 +7,7 @@ describe('UserService', () => {
   let service: UserService;
 
   const mockUserRepository = {
-    findOneBy: jest.fn(), //
+    findOneBy: jest.fn(),
     create: jest.fn().mockImplementation(dto => ({ id: 'uuid', ...dto })),
     save: jest.fn().mockImplementation(u => Promise.resolve(u)),
   };
@@ -28,6 +28,6 @@ describe('UserService', () => {
     const result = await service.create({ 
       name: 'Wesley', email: 'w@t.com', password: '123', role: UserRole.VIEWER 
     });
-    expect(result.role).toBe('viewer'); // Value from DB
+    expect(result.role).toBe('viewer'); 
   });
 });
