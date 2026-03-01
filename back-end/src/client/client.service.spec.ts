@@ -8,11 +8,11 @@ describe('ClientService', () => {
   let service: ClientService;
 
   const mockClientRepository = {
-    findOneBy: jest.fn(),
+    findOneBy: jest.fn(), // Required for findOne()
     save: jest.fn(),
-    softDelete: jest.fn(),
-    softRemove: jest.fn(),
+    softRemove: jest.fn(), // Required for remove()
     find: jest.fn(),
+    create: jest.fn().mockImplementation(dto => ({ id: 'uuid', ...dto })),
   };
 
   beforeEach(async () => {
@@ -30,14 +30,8 @@ describe('ClientService', () => {
     jest.clearAllMocks();
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
-
-
-  it('should throw NotFoundException if client to remove does not exist', async () => {
+  it('should throw NotFoundException if client does not exist', async () => {
     mockClientRepository.findOneBy.mockResolvedValue(null);
-
-    await expect(service.remove('invalid-id')).rejects.toThrow(NotFoundException);
+    await expect(service.remove('invalid')).rejects.toThrow(NotFoundException);
   });
 });

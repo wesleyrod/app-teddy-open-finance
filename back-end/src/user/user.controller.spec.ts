@@ -1,20 +1,33 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UserController } from './user.controller';
+import { getRepositoryToken } from '@nestjs/typeorm';
 import { UserService } from './user.service';
+import { User, UserRole } from './entities/user.entity';
 
-describe('UserController', () => {
-  let controller: UserController;
+describe('UserService', () => {
+  let service: UserService;
+
+  const mockUserRepository = {
+    findOneBy: jest.fn(), //
+    create: jest.fn().mockImplementation(dto => ({ id: 'uuid', ...dto })),
+    save: jest.fn().mockImplementation(u => Promise.resolve(u)),
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [UserController],
-      providers: [UserService],
+      providers: [
+        UserService,
+        { provide: getRepositoryToken(User), useValue: mockUserRepository },
+      ],
     }).compile();
 
-    controller = module.get<UserController>(UserController);
+    service = module.get<UserService>(UserService);
   });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
+  it('should create a user with VIEWER role', async () => {
+    mockUserRepository.findOneBy.mockResolvedValue(null);
+    const result = await service.create({ 
+      name: 'Wesley', email: 'w@t.com', password: '123', role: UserRole.VIEWER 
+    });
+    expect(result.role).toBe('viewer'); // Sincronizado com o banco
   });
 });

@@ -8,7 +8,18 @@ describe('ClientController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ClientController],
-      providers: [ClientService],
+      providers: [
+        {
+          provide: ClientService,
+          // Mockamos o serviço diretamente para isolar o controlador
+          useValue: {
+            findAll: jest.fn().mockResolvedValue([]),
+            findOne: jest.fn(),
+            create: jest.fn(),
+            remove: jest.fn(),
+          },
+        },
+      ],
     }).compile();
 
     controller = module.get<ClientController>(ClientController);

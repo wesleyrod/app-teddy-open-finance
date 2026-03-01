@@ -6,32 +6,32 @@ import {} from 'class-validator';
 export class Client {
   @ApiProperty()
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @ApiProperty()
   @Column()
-  name: string;
+  name!: string;
 
   @ApiProperty()
   @Column('decimal', { precision: 15, scale: 2 })
-  salary: number;
+  salary!: number;
 
   @ApiProperty()
   @Column('decimal', { precision: 15, scale: 2 })
-  companyValue: number;
+  companyValue!: number;
 
   @ApiProperty({ description: 'Contador de visualizações do cliente' })
   @Column({ default: 0 })
-  viewCount: number;
+  viewCount!: number;
 
   @ApiProperty()
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @ApiProperty()
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 
   @DeleteDateColumn()
-  deletedAt: Date;
+  deletedAt!: Date;
 }

@@ -4,15 +4,15 @@ import { ApiProperty } from '@nestjs/swagger';
 export class CreateClientDto {
   @ApiProperty({ example: 'Wesley' })
   @IsString()
-  name: string;
+  name!: string;
 
   @ApiProperty({ example: 1000 })
   @IsNumber()
   @Min(0)
-  salary: number;
+  salary!: number;
 
   @ApiProperty({ example: 1000 })
   @IsNumber()
   @Min(0)
-  companyValue: number;
+  companyValue!: number;
 }

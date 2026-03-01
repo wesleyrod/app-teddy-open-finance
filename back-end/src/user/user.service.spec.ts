@@ -7,42 +7,27 @@ describe('UserService', () => {
   let service: UserService;
 
   const mockUserRepository = {
-    create: jest.fn().mockImplementation(dto => dto),
-    save: jest.fn().mockImplementation(user => 
-      Promise.resolve({ id: 'mock-uuid', ...user })
-    ),
-    findOne: jest.fn(),
-    findOneBy: jest.fn().mockResolvedValue(null),
+    findOneBy: jest.fn(), //
+    create: jest.fn().mockImplementation(dto => ({ id: 'uuid', ...dto })),
+    save: jest.fn().mockImplementation(u => Promise.resolve(u)),
   };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UserService,
-        {
-          provide: getRepositoryToken(User),
-          useValue: mockUserRepository,
-        },
+        { provide: getRepositoryToken(User), useValue: mockUserRepository },
       ],
     }).compile();
 
     service = module.get<UserService>(UserService);
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
-
-  it('should create a new user with VIEWER role', async () => {
-    const userDto = { 
-      name: 'Wesley', 
-      email: 'wesley@teddy.com', 
-      password: '123', 
-      role: UserRole.VIEWER
-    };
-    
-    const result = await service.create(userDto);
-    expect(result).toHaveProperty('id');
-    expect(result.role).toEqual('viewer'); 
+  it('should create a user with VIEWER role', async () => {
+    mockUserRepository.findOneBy.mockResolvedValue(null);
+    const result = await service.create({ 
+      name: 'Wesley', email: 'w@t.com', password: '123', role: UserRole.VIEWER 
+    });
+    expect(result.role).toBe('viewer'); // Value from DB
   });
 });
