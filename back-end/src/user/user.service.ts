@@ -15,61 +15,46 @@ export class UserService {
     private readonly repository: Repository<User>,
   ) {}
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
-    const { email, password } = createUserDto;
+  async create(createUserDto: CreateUserDto) {
+    const userExists = await this.repository.findOneBy({ email: createUserDto.email });
+    if (userExists) throw new ConflictException('E-mail já cadastrado');
 
-    const userExists = await this.repository.findOneBy({ email });
-    if (userExists) {
-      throw new ConflictException('Este e-mail já está em uso');
-    }
-
-    const hashedPassword = await bcrypt.hash(password, this.saltRounds);
+    const hashedPassword = await bcrypt.hash(createUserDto.password, this.saltRounds);
+    const user = this.repository.create({ ...createUserDto, password: hashedPassword });
     
-    const user = this.repository.create({
-      ...createUserDto,
-      password: hashedPassword,
-    });
-
     const savedUser = await this.repository.save(user);
-    return savedUser;
+    const { password, ...result } = savedUser;
+    return result;
   }
 
-  async findAll(): Promise<User[]> {
+  async findAll() {
     return await this.repository.find();
   }
 
-  async findOne(id: string): Promise<User> {
+  async findOne(id: string) {
     const user = await this.repository.findOneBy({ id });
-    if (!user) {
-      throw new NotFoundException(`Usuário com ID ${id} não encontrado`);
-    }
+    if (!user) throw new NotFoundException('Usuário não encontrado');
     return user;
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
-    const user = await this.findOne(id);
-
-    if (updateUserDto.password) {
-      updateUserDto.password = await bcrypt.hash(updateUserDto.password, this.saltRounds);
-    }
-
-    const updatedUser = await this.repository.preload({
-      id,
-      ...updateUserDto,
-    });
-
-    return await this.repository.save(updatedUser!);
-  }
-
-  async remove(id: string): Promise<void> {
-    const user = await this.findOne(id);
-    await this.repository.remove(user);
-  }
-
-  async findByEmail(email: string): Promise<User | null> {
+  async findByEmail(email: string) {
     return await this.repository.findOne({
       where: { email },
       select: ['id', 'name', 'email', 'password', 'role'],
     });
+  }
+
+  async update(id: string, updateUserDto: UpdateUserDto) {
+    if (updateUserDto.password) {
+      updateUserDto.password = await bcrypt.hash(updateUserDto.password, this.saltRounds);
+    }
+    const user = await this.repository.preload({ id, ...updateUserDto });
+    if (!user) throw new NotFoundException('Usuário não encontrado');
+    return await this.repository.save(user);
+  }
+
+  async remove(id: string) {
+    const user = await this.findOne(id);
+    await this.repository.remove(user);
   }
 }
