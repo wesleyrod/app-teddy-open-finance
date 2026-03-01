@@ -10,7 +10,16 @@ async function bootstrap() {
     .setTitle('Teddy Open Finance API')
     .setDescription('Gerenciamento de clientes e usuários com autenticação JWT')
     .setVersion('1.0')
-    .addBearerAuth() 
+    .addBearerAuth({
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'JWT',
+        description: 'Insira o token JWT recebido no login',
+        in: 'header',
+      },
+      'access-token',
+    ) 
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
