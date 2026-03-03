@@ -11,6 +11,10 @@
       "@nx/react/typings/image.d.ts",
       "vite/client"
     ],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
     "rootDir": "src",
     "module": "esnext",
     "moduleResolution": "bundler"
