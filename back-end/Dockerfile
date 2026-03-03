@@ -3,7 +3,8 @@ FROM node:20-alpine
 WORKDIR /app
 
 COPY package*.json ./
-COPY apps/back-end ./apps/back-end
+COPY nx.json ./
+COPY tsconfig.base.json ./
 
 RUN npm install
 
