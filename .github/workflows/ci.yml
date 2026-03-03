@@ -2,9 +2,9 @@ name: CI - Teddy Open Finance
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [main, master]
   pull_request:
-    branches: [ main, master ]
+    branches: [main, master]
 
 jobs:
   main:
@@ -18,14 +18,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
 
       - name: Typecheck
         run: NODE_OPTIONS="--max-old-space-size=4096" npx nx run-many -t typecheck
-        
+
       - name: Lint
         run: npx nx run-many -t lint
 
@@ -33,11 +33,10 @@ jobs:
         run: npx nx run-many -t test --parallel=3
         env:
           JWT_SECRET: test_secret
-          DB_TYPE: sqlite 
+          DB_TYPE: sqlite
 
       - name: Build
         run: npx nx run-many -t build
 
       - name: Docker Build Check
-        run: |
-          docker build -t teddy-api:test -f apps/back-end/Dockerfile .
+        run: docker build -t teddy-api:test -f apps/back-end/Dockerfile .

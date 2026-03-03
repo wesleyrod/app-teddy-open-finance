@@ -2,8 +2,8 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-COPY package.json yarn.lock* package-lock.json* ./
-COPY apps/back-end/package.json ./apps/back-end/ 
+COPY package*.json ./
+COPY apps/back-end ./apps/back-end
 
 RUN npm install
 
