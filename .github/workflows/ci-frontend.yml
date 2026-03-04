@@ -1,0 +1,52 @@
+name: CI - Front-End
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - "front-end/**"
+      - "package.json"
+      - "package-lock.json"
+      - "nx.json"
+      - "tsconfig.base.json"
+      - ".github/workflows/ci-frontend.yml"
+  pull_request:
+    branches: [main, master]
+    paths:
+      - "front-end/**"
+      - "package.json"
+      - "package-lock.json"
+      - "nx.json"
+      - "tsconfig.base.json"
+      - ".github/workflows/ci-frontend.yml"
+
+jobs:
+  frontend:
+    name: Front-End Pipeline
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Lint
+        run: npx nx lint front-end
+
+      - name: Test
+        run: npx nx test front-end
+
+      - name: Build
+        run: npx nx build front-end
+
+      - name: Docker Build Check
+        run: docker build -t teddy-frontend:test -f front-end/Dockerfile .

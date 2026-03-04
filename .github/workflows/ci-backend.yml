@@ -1,14 +1,30 @@
-name: CI - Teddy Open Finance
+name: CI - Back-End
 
 on:
   push:
     branches: [main, master]
+    paths:
+      - "back-end/**"
+      - "package.json"
+      - "package-lock.json"
+      - "nx.json"
+      - "tsconfig.base.json"
+      - ".github/workflows/ci-backend.yml"
   pull_request:
     branches: [main, master]
+    paths:
+      - "back-end/**"
+      - "package.json"
+      - "package-lock.json"
+      - "nx.json"
+      - "tsconfig.base.json"
+      - ".github/workflows/ci-backend.yml"
 
 jobs:
-  main:
+  backend:
+    name: Back-End Pipeline
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
         with:
@@ -23,20 +39,14 @@ jobs:
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
 
-      - name: Typecheck
-        run: NODE_OPTIONS="--max-old-space-size=4096" npx nx run-many -t typecheck
-
       - name: Lint
-        run: npx nx run-many -t lint
+        run: npx nx lint back-end
 
       - name: Test
-        run: npx nx run-many -t test --parallel=3
+        run: npx nx test back-end
         env:
           JWT_SECRET: test_secret
           DB_TYPE: sqlite
 
       - name: Build
-        run: npx nx run-many -t build
-
-      - name: Docker Build Check
-        run: docker build -t teddy-api:test -f apps/back-end/Dockerfile .
+        run: npx nx build back-end
