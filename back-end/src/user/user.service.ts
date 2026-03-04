@@ -23,7 +23,8 @@ export class UserService {
     const user = await this.repository.create({ ...createUserDto, password: hashedPassword });
     
     const savedUser = await this.repository.save(user);
-    const { password: _, ...result } = savedUser;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _pass, ...result } = savedUser;
     return result;
   }
 

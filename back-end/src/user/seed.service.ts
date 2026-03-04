@@ -21,7 +21,7 @@ export class SeedService implements OnModuleInit {
     const adminEmail = 'admin@teddy.com.br';
     const adminPassword = 'admin123';
 
-    let user = await this.userRepository.findOne({
+    const user = await this.userRepository.findOne({
       where: { email: adminEmail },
       select: ['id', 'email', 'password'],
     });
@@ -29,12 +29,10 @@ export class SeedService implements OnModuleInit {
     const hashedPassword = await bcrypt.hash(adminPassword, 10);
 
     if (user) {
-      // Atualiza a senha para garantir que está correta
       user.password = hashedPassword;
       await this.userRepository.save(user);
       this.logger.log(`Senha do admin (${adminEmail}) atualizada com sucesso.`);
     } else {
-      // Cria o usuário admin
       const admin = this.userRepository.create({
         name: 'Admin',
         email: adminEmail,
