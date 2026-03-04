@@ -154,5 +154,4 @@ export function useClients() {
   return context;
 }
 
-// Re-export Client type for convenience
 export type { Client } from "@/services/api";

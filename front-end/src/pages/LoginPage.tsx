@@ -1,32 +1,52 @@
-import { useState, type FormEvent } from "react";
+import { useState } from "react";
 import { Navigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/contexts/AuthContext";
 
+const loginSchema = z.object({
+  email: z
+    .string()
+    .min(1, "O e-mail é obrigatório.")
+    .email("Formato de e-mail inválido."),
+  password: z
+    .string()
+    .min(1, "A senha é obrigatória.")
+    .min(6, "A senha deve ter ao menos 6 caracteres."),
+});
+
+type LoginFormData = z.infer<typeof loginSchema>;
+
 export default function LoginPage() {
   const { login, isAuthenticated } = useAuth();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [serverError, setServerError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Se já estiver autenticado, redireciona para o dashboard
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+    mode: "onBlur",
+  });
+
   if (isAuthenticated) {
     return <Navigate to="/" replace />;
   }
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    setError("");
+  const onSubmit = async (data: LoginFormData) => {
+    setServerError("");
     setLoading(true);
-
     try {
-      await login(email, password);
+      await login(data.email, data.password);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro ao fazer login");
+      setServerError(err instanceof Error ? err.message : "Erro ao fazer login");
     } finally {
       setLoading(false);
     }
@@ -35,7 +55,7 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen w-full items-center justify-center bg-slate-50 p-4">
       <Card className="w-full max-w-md border-none shadow-2xl">
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <CardHeader className="space-y-1 text-center">
             <div className="flex justify-center mb-4">
               <div className="h-12 w-12 rounded-full bg-orange-500 flex items-center justify-center text-white font-bold text-xl">
@@ -51,9 +71,9 @@ export default function LoginPage() {
           </CardHeader>
 
           <CardContent className="space-y-4">
-            {error && (
+            {serverError && (
               <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm">
-                {error}
+                {serverError}
               </div>
             )}
 
@@ -62,30 +82,26 @@ export default function LoginPage() {
               <Input
                 id="email"
                 type="email"
-                placeholder=""
-                className="focus-visible:ring-orange-500"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
+                placeholder="seu@email.com"
+                className={`focus-visible:ring-orange-500 ${errors.email ? "border-red-400 focus-visible:ring-red-400" : ""}`}
+                {...register("email")}
               />
+              {errors.email && (
+                <p className="text-red-500 text-xs">{errors.email.message}</p>
+              )}
             </div>
 
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="password">Senha</Label>
-                <a href="#" className="text-xs text-orange-600 hover:underline">
-                  Esqueceu a senha?
-                </a>
-              </div>
+              <Label htmlFor="password">Senha</Label>
               <Input
                 id="password"
                 type="password"
-                className="focus-visible:ring-orange-500"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                minLength={6}
+                className={`focus-visible:ring-orange-500 ${errors.password ? "border-red-400 focus-visible:ring-red-400" : ""}`}
+                {...register("password")}
               />
+              {errors.password && (
+                <p className="text-red-500 text-xs">{errors.password.message}</p>
+              )}
             </div>
           </CardContent>
 
@@ -97,13 +113,6 @@ export default function LoginPage() {
             >
               {loading ? "Entrando..." : "Entrar no Sistema"}
             </Button>
-
-            <p className="text-center text-sm text-slate-500">
-              Ainda não tem acesso?{" "}
-              <a href="#" className="font-medium text-orange-600 hover:underline">
-                Solicite ao administrador
-              </a>
-            </p>
           </CardFooter>
         </form>
       </Card>

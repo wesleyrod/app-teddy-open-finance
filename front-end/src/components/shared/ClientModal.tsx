@@ -1,7 +1,7 @@
 import { type ReactNode, useState, useRef } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { ClientForm } from "./ClientForm";
+import { ClientForm, type ClientFormData } from "./ClientForm";
 import { useClients } from "@/contexts/ClientsContext";
 import type { Client } from "@/services/api";
 
@@ -17,15 +17,15 @@ export function ClientModal({ trigger, title = "Criar cliente:", initialData }: 
   const [error, setError] = useState("");
   const { addClient, editClient } = useClients();
 
-  const formDataRef = useRef({ name: "", salary: 0, companyValue: 0 });
+  const formDataRef = useRef<ClientFormData>({ name: "", salary: 0, companyValue: 0 });
+  const submitRef = useRef<(() => Promise<boolean>) | null>(null);
 
   const handleSave = async () => {
-    const { name, salary, companyValue } = formDataRef.current;
+    // Trigger react-hook-form validation via the ref
+    const isValid = await submitRef.current?.();
+    if (!isValid) return;
 
-    if (!name.trim()) {
-      setError("O nome é obrigatório.");
-      return;
-    }
+    const { name, salary, companyValue } = formDataRef.current;
 
     setSaving(true);
     setError("");
@@ -62,6 +62,7 @@ export function ClientModal({ trigger, title = "Criar cliente:", initialData }: 
         <ClientForm
           initialData={initialData}
           onFormDataChange={(data) => { formDataRef.current = data; }}
+          submitRef={submitRef}
         />
 
         <Button
