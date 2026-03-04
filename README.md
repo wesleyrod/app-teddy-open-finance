@@ -1,107 +1,216 @@
-# New Nx Repository
+# 🏦 Teddy Open Finance
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
+Sistema **full-stack** de gerenciamento de clientes, com autenticação JWT, CRUD completo, paginação, soft-delete e painel administrativo — pronto para rodar localmente via **Docker**.
 
-✨ Your new, shiny [Nx workspace](https://nx.dev) is ready ✨.
+---
 
-[Learn more about this workspace setup and its capabilities](https://nx.dev/nx-api/js?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
-
-## Try the full Nx platform
-🚀 If you haven't connected to Nx Cloud yet, [complete your setup here](https://cloud.nx.app/setup/connect-workspace/guide). Get faster builds with remote caching, distributed task execution, and self-healing CI. [See how your workspace can benefit](#nx-cloud).
-
-## Generate a library
-
-```sh
-npx nx g @nx/js:lib packages/pkg1 --publishable --importPath=@my-org/pkg1
-```
-
-## Run tasks
-
-To build the library use:
-
-```sh
-npx nx build pkg1
-```
-
-To run any task with Nx use:
-
-```sh
-npx nx <target> <project-name>
-```
-
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
-
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Versioning and releasing
-
-To version and release the library use
+## 📐 Arquitetura
 
 ```
-npx nx release
+┌────────────────────────────────────────────────────────────────┐
+│                        Monorepo Nx                             │
+│                                                                │
+│  ┌──────────────────────┐       ┌───────────────────────────┐  │
+│  │      front-end       │       │        back-end           │  │
+│  │  React 19 · Vite 7   │──────▶│  NestJS 11 · TypeORM      │  │
+│  │  TypeScript · Vitest  │ REST  │  Swagger · JWT · bcrypt   │  │
+│  │  Tailwind CSS 3      │ /api  │  class-validator           │  │
+│  │  Context API         │       │                           │  │
+│  └──────────┬───────────┘       └────────────┬──────────────┘  │
+│             │                                │                 │
+│             │  :5173 (dev) / :80 (prod)       │  :3000          │
+│             │                                │                 │
+│             │                     ┌──────────▼──────────┐      │
+│             │                     │   PostgreSQL 15     │      │
+│             │                     │       :5432         │      │
+│             │                     └─────────────────────┘      │
+│             │                                                  │
+│  ┌──────────▼──────────────────────────────────────────────┐   │
+│  │              GitHub Actions CI/CD                        │   │
+│  │  ci-frontend.yml (lint → test → build → docker)         │   │
+│  │  ci-backend.yml  (lint → test → build)                  │   │
+│  └─────────────────────────────────────────────────────────┘   │
+└────────────────────────────────────────────────────────────────┘
 ```
 
-Pass `--dry-run` to see what would happen without actually releasing the library.
+---
 
-[Learn more about Nx release &raquo;](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+## 🗂️ Estrutura do Repositório
 
-## Keep TypeScript project references up to date
-
-Nx automatically updates TypeScript [project references](https://www.typescriptlang.org/docs/handbook/project-references.html) in `tsconfig.json` files to ensure they remain accurate based on your project dependencies (`import` or `require` statements). This sync is automatically done when running tasks such as `build` or `typecheck`, which require updated references to function correctly.
-
-To manually trigger the process to sync the project graph dependencies information to the TypeScript project references, run the following command:
-
-```sh
-npx nx sync
+```
+/
+├── front-end/          → React + Vite + TS (SPA)
+│   ├── src/
+│   │   ├── features/   → auth, clients
+│   │   ├── components/ → ui, layout, common
+│   │   └── services/   → API client (axios)
+│   ├── Dockerfile
+│   ├── docker-compose.yml
+│   └── README.md
+│
+├── back-end/           → NestJS + TypeORM + PostgreSQL
+│   ├── src/
+│   │   ├── auth/       → Login JWT
+│   │   ├── client/     → CRUD + soft-delete + viewCount
+│   │   ├── user/       → Gestão de usuários
+│   │   └── health/     → Healthcheck
+│   ├── Dockerfile
+│   ├── docker-compose.yml
+│   └── README.md
+│
+├── .github/workflows/  → CI separado FE/BE
+├── nx.json             → Configuração Nx monorepo
+└── README.md           → Este arquivo
 ```
 
-You can enforce that the TypeScript project references are always in the correct state when running in CI by adding a step to your CI job configuration that runs the following command:
+---
 
-```sh
-npx nx sync:check
+## 🚀 Início Rápido
+
+### Pré-requisitos
+
+- **Node.js** ≥ 20
+- **npm** ≥ 10
+- **Docker** e **Docker Compose** (para rodar com containers)
+
+### 1. Clonar o repositório
+
+```bash
+git clone https://github.com/wesleyrod/app-teddy-open-finance.git
+cd app-teddy-open-finance
 ```
 
-[Learn more about nx sync](https://nx.dev/reference/nx-commands#sync)
+### 2. Instalar dependências
 
-## Nx Cloud
-
-Nx Cloud ensures a [fast and scalable CI](https://nx.dev/ci/intro/why-nx-cloud?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) pipeline. It includes features such as:
-
-- [Remote caching](https://nx.dev/ci/features/remote-cache?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task distribution across multiple machines](https://nx.dev/ci/features/distribute-task-execution?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Automated e2e test splitting](https://nx.dev/ci/features/split-e2e-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task flakiness detection and rerunning](https://nx.dev/ci/features/flaky-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-### Set up CI (non-Github Actions CI)
-
-**Note:** This is only required if your CI provider is not GitHub Actions.
-
-Use the following command to configure a CI workflow for your workspace:
-
-```sh
-npx nx g ci-workflow
+```bash
+npm install --legacy-peer-deps
 ```
 
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+### 3. Configurar variáveis de ambiente
 
-## Install Nx Console
+```bash
+# Back-end
+cp back-end/.env.example back-end/.env
 
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
+# Front-end
+cp front-end/.env.example front-end/.env
+```
 
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+Edite os arquivos `.env` conforme necessário (veja os READMEs de cada app para detalhes).
 
-## Useful links
+### 4. Subir o banco de dados (Docker)
 
-Learn more:
+```bash
+cd back-end
+docker compose up -d db
+cd ..
+```
 
-- [Learn more about this workspace setup](https://nx.dev/nx-api/js?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+### 5. Rodar em modo desenvolvimento
 
-And join the Nx community:
+```bash
+# Terminal 1 — Back-end
+npx nx serve back-end
 
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+# Terminal 2 — Front-end
+npx nx dev front-end
+```
+
+| Serviço | URL |
+|---|---|
+| Front-end | <http://localhost:5173> |
+| API | <http://localhost:3000/api> |
+| Swagger | <http://localhost:3000/docs> |
+| Healthcheck | <http://localhost:3000/api/healthz> |
+
+### 6. Rodar tudo via Docker
+
+```bash
+# Back-end (API + PostgreSQL)
+cd back-end && docker compose up -d && cd ..
+
+# Front-end (Nginx)
+cd front-end && docker compose up -d && cd ..
+```
+
+---
+
+## 🧪 Testes
+
+```bash
+# Todos os testes
+npx nx run-many -t test
+
+# Apenas front-end
+npx nx test front-end
+
+# Apenas back-end
+npx nx test back-end
+```
+
+---
+
+## 🔄 CI/CD
+
+Os pipelines CI são **separados por aplicação** via GitHub Actions:
+
+| Workflow | Arquivo | Trigger |
+|---|---|---|
+| Front-End | `.github/workflows/ci-frontend.yml` | Mudanças em `front-end/` |
+| Back-End | `.github/workflows/ci-backend.yml` | Mudanças em `back-end/` |
+
+Cada pipeline executa: **Lint → Test → Build** (+ Docker Build Check no front-end).
+
+---
+
+## 📈 Escalabilidade
+
+O projeto foi pensado para escalar horizontalmente:
+
+- **Monorepo Nx** — permite adicionar novas apps (mobile, admin) e libs compartilhadas sem duplicar infraestrutura. O graph de dependências garante builds incrementais e cache inteligente.
+- **API Stateless** — cada instância da API NestJS é independente. O uso de JWT elimina sessões no servidor, permitindo múltiplas réplicas atrás de um load balancer.
+- **Banco de dados isolado** — o PostgreSQL roda em container próprio, podendo ser substituído por um serviço gerenciado (RDS, Cloud SQL) em produção.
+- **Front-end estático** — servido via Nginx, pode ser distribuído por CDN (CloudFront, Vercel) para latência mínima globalmente.
+- **Docker Compose por app** — cada app tem seu próprio `docker-compose.yml`, facilitando deploy isolado e escalonamento independente.
+- **CI/CD separado** — pipelines independentes permitem deploy parcial: atualizar apenas o front ou o back sem impactar o outro.
+
+### Visão AWS (proposta)
+
+```
+                    ┌───────────────┐
+                    │  CloudFront   │
+                    │    (CDN)      │
+                    └──────┬────────┘
+                           │
+               ┌───────────▼───────────┐
+               │     S3 (front-end)    │
+               └───────────────────────┘
+                           │
+               ┌───────────▼───────────┐
+               │   ALB (Load Balancer) │
+               └───────────┬───────────┘
+                           │
+          ┌────────────────┼────────────────┐
+          │                │                │
+   ┌──────▼──────┐  ┌─────▼──────┐  ┌─────▼──────┐
+   │  ECS Task 1 │  │ ECS Task 2 │  │ ECS Task N │
+   │  (NestJS)   │  │  (NestJS)  │  │  (NestJS)  │
+   └──────┬──────┘  └─────┬──────┘  └─────┬──────┘
+          │                │                │
+          └────────────────┼────────────────┘
+                           │
+               ┌───────────▼───────────┐
+               │   RDS PostgreSQL      │
+               │   (Multi-AZ)         │
+               └───────────────────────┘
+```
+
+---
+
+## 📚 Documentação Adicional
+
+- [README do Front-End](./front-end/README.md)
+- [README do Back-End](./back-end/README.md)
+- [Swagger (API Docs)](http://localhost:3000/docs) — disponível com o servidor rodando
+
+---
