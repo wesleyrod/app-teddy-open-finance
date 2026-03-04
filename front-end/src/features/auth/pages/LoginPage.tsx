@@ -58,9 +58,11 @@ export default function LoginPage() {
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <CardHeader className="space-y-1 text-center">
             <div className="flex justify-center mb-4">
-              <div className="h-12 w-12 rounded-full bg-orange-500 flex items-center justify-center text-white font-bold text-xl">
-                T
-              </div>
+              <img
+                src="https://lp.teddydigital.io/wp-content/uploads/2024/02/logo-preto-2048x992-1.webp"
+                alt="Teddy Open Finance"
+                className="h-14"
+              />
             </div>
             <CardTitle className="text-2xl font-bold tracking-tight text-slate-900">
               Acesse sua conta
