@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { PerPageSelector } from "./PerPageSelector";
+import { PerPageSelector } from "@/components/common/PerPageSelector";
 
 interface PageHeaderProps {
   title: ReactNode;

@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Minus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { ClientCard } from "@/components/shared/ClientCard";
-import { PageHeader } from "@/components/shared/PageHeader";
-import { Pagination } from "@/components/shared/Pagination";
-import { useClients } from "@/contexts/ClientsContext";
+import { ClientCard } from "@/features/clients/components/ClientCard";
+import { PageHeader } from "@/components/layout/PageHeader";
+import { Pagination } from "@/components/common/Pagination";
+import { useClients } from "@/features/clients/contexts/ClientsContext";
 
 export default function SelectedClientsPage() {
   const { selectedClients, removeSelectedClient, clearSelectedClients } = useClients();

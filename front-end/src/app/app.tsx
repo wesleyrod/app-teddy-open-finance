@@ -1,10 +1,10 @@
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
-import DashboardLayout from '../components/shared/DashboardLayout';
-import ClientsPage from '../pages/ClientsPage';
-import SelectedClientsPage from '../pages/SelectedClientsPage';
-import LoginPage from '../pages/LoginPage';
-import { ClientsProvider } from '../contexts/ClientsContext';
-import { AuthProvider, useAuth } from '../contexts/AuthContext';
+import DashboardLayout from '@/components/layout/DashboardLayout';
+import ClientsPage from '@/features/clients/pages/ClientsPage';
+import SelectedClientsPage from '@/features/clients/pages/SelectedClientsPage';
+import LoginPage from '@/features/auth/pages/LoginPage';
+import { ClientsProvider } from '@/features/clients/contexts/ClientsContext';
+import { AuthProvider, useAuth } from '@/features/auth/contexts/AuthContext';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuth();

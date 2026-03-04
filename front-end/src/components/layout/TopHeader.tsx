@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/features/auth/contexts/AuthContext";
 
 const TEDDY_LOGO = "https://lp.teddydigital.io/wp-content/uploads/2024/02/logo-preto-2048x992-1.webp";
 
