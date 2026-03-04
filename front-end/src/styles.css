@@ -57,3 +57,9 @@
     --chart-5: 340 75% 55%
   }
 }
+
+@layer base {
+  body {
+    font-family: 'Inter', sans-serif;
+  }
+}
