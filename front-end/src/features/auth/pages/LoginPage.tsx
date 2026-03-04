@@ -84,7 +84,7 @@ export default function LoginPage() {
               <Input
                 id="email"
                 type="email"
-                placeholder="seu@email.com"
+                placeholder="seuemail@email.com"
                 className={`focus-visible:ring-orange-500 ${errors.email ? "border-red-400 focus-visible:ring-red-400" : ""}`}
                 {...register("email")}
               />
