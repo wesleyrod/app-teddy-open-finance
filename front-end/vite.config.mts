@@ -7,11 +7,11 @@ export default defineConfig(() => ({
   root: import.meta.dirname,
   cacheDir: '../node_modules/.vite/front-end',
   server: {
-    port: 4200,
+    port: parseInt(process.env.VITE_PORT || '5173'),
     host: 'localhost',
     proxy: {
       '/api': {
-        target: 'http://localhost:3000',
+        target: process.env.VITE_API_URL || 'http://localhost:3000',
         changeOrigin: true,
       },
     },
@@ -22,7 +22,7 @@ export default defineConfig(() => ({
     },
   },
   preview: {
-    port: 4200,
+    port: 5173,
     host: 'localhost',
   },
   plugins: [react()],
